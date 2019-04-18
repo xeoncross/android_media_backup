@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -16,9 +17,10 @@ import (
 // Last used on a Google Pixel 2 which had a bad USB-C port.
 //
 
-var CameraDirectory = "Camera"
+var MediaDirectory = flag.String("dir", "DCIM/Camera", "Folder to backup")
 
 func main() {
+	flag.Parse()
 
 	// Step 1: is the device connected?
 	b, err := exec.Command("adb", "devices").Output()
@@ -44,21 +46,21 @@ func main() {
 	fmt.Printf("Downloading from %s\n", deviceID)
 
 	// Step 2: what images have already been brought over?
-	if ok, _ := exists(CameraDirectory); !ok {
-		err = os.Mkdir(CameraDirectory, 0755)
+	if ok, _ := exists(*MediaDirectory); !ok {
+		err = os.MkdirAll(*MediaDirectory, 0755)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	ComputerFiles, err := FilePathWalkDir(CameraDirectory)
+	ComputerFiles, err := FilePathWalkDir(*MediaDirectory)
 
 	if err != nil {
 		log.Fatal("Error looking at files", err)
 	}
 
 	// Step 3: What files are on the device?
-	b, err = exec.Command("adb", "shell", "ls", "/sdcard/DCIM/Camera").Output()
+	b, err = exec.Command("adb", "shell", "ls", "/sdcard/"+*MediaDirectory).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,7 +81,7 @@ func main() {
 
 			if found && len(pf) > 4 {
 				// fmt.Printf("REMOVE: %s\n", pf)
-				b, err = exec.Command("adb", "shell", "rm", filepath.Join("/sdcard/DCIM/Camera/", pf)).Output()
+				b, err = exec.Command("adb", "shell", "rm", filepath.Join("/sdcard/", *MediaDirectory, pf)).Output()
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -89,7 +91,7 @@ func main() {
 	}
 
 	// Step 4: Download new ones: adb pull -a /sdcard/DCIM/Camera/ ./
-	b, err = exec.Command("adb", "pull", "-a", "/sdcard/DCIM/Camera/", "./").Output()
+	b, err = exec.Command("adb", "pull", "-a", "/sdcard/"+*MediaDirectory, "./").Output()
 	if err != nil {
 		log.Fatal(err)
 	}

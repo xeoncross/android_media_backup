@@ -15,6 +15,9 @@ Using the command line, you can check out this project, and run it using Go:
     $ cd android_media_backup
     $ go run android_media_backup.go
 
+By default the script downloads everything from `DCIM/Camera`, but you can change this when calling the script.
+
+    $ go run android_media_backup.go -dir="WhatsApp"
 
 ### More about adb
 
