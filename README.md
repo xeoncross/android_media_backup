@@ -19,6 +19,11 @@ By default the script downloads everything from `DCIM/Camera`, but you can chang
 
     $ go run android_media_backup.go -dir="WhatsApp"
 
+### Warning
+
+Files are removed from device after being transferred to the computer. This required when dealing with phones that continue to disconnect in the middle of transfers.
+
+
 ### More about adb
 
 Android Debug Bridge (adb) can be used directly from the terminal. You can use it to access the files manually for coping by starting a new shell instance to browse the device folders:

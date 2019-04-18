@@ -54,6 +54,7 @@ func main() {
 	}
 
 	ComputerFiles, err := FilePathWalkDir(*MediaDirectory)
+	fmt.Printf("Computer Files:\n%s\n", strings.Join(ComputerFiles, "\n"))
 
 	if err != nil {
 		log.Fatal("Error looking at files", err)
@@ -64,7 +65,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Printf("%q\n", b)
+	fmt.Printf("Phone Files:\n%s\n", string(b))
 
 	PhoneFiles := strings.Split(string(b), "\n")
 
@@ -91,7 +92,7 @@ func main() {
 	}
 
 	// Step 4: Download new ones: adb pull -a /sdcard/DCIM/Camera/ ./
-	b, err = exec.Command("adb", "pull", "-a", "/sdcard/"+*MediaDirectory, "./").Output()
+	b, err = exec.Command("adb", "pull", "-a", "/sdcard/"+*MediaDirectory, *MediaDirectory).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
